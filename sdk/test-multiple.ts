@@ -6,10 +6,12 @@ import { fileURLToPath } from "url";
 import { Buffer } from "buffer";
 
 import { db } from "./src/lib/db";
-import { buckets } from "./src";
+import { createBucket, listBuckets, deleteBucket } from "./src/db/buckets";
 import { generateKey, exportKey, importKey, encrypt, decrypt } from "./src/core/crypto";
 import { chunkData, joinChunks } from "./src/core/chunk";   // ✅ use reusable chunker
 import { Annotation } from "golem-base-sdk";
+import { getClient, initClient } from "./src/lib/client";
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -21,7 +23,8 @@ async function ensureDir(p: string) {
 }
 
 async function ensureBucket(): Promise<string> {
-  const b = await buckets.createBucket("dbchain-demo");
+  await initClient()
+  const b = await createBucket("dbchain-demo");
   console.log("🪣 bucket:", b.id);
   return b.id;
 }
@@ -152,7 +155,8 @@ async function downloadAll(client: Awaited<ReturnType<typeof db>>, bucketId: str
 }
 
 async function main() {
-  const client = await db();
+  await initClient()
+  const client = await getClient();
   const bucketId = await ensureBucket();
 
   console.log("\n— Before upload —");

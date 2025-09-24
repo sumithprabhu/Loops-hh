@@ -1,5 +1,5 @@
 // lib/sdk.ts
-import { initClient } from "@sumithprabhu/edv-sdk";
+import { initClient } from "shardbase";
 
 let initialized = false;
 

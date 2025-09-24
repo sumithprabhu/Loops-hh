@@ -1,11 +1,14 @@
 import "dotenv/config";
-import { crypto } from "./src"; // our AES utils
+import { generateKey, exportKey, importKey, encrypt, decrypt } from "./src/core/crypto";
 import { createBucket, listBuckets, deleteBucket } from "./src/db/buckets";
 import { db } from "./src/lib/db";
 import { Annotation } from "golem-base-sdk";
+import { initClient , getClient} from "./src/lib/client";
+
 
 
 async function main() {
+  await initClient()
   const enc = new TextEncoder();
   const dec = new TextDecoder();
 
@@ -14,8 +17,8 @@ async function main() {
   console.log("📦 original:", input, "->", dec.decode(input));
 
   // --- 2. generate key + chunk data ---
-  const key = await crypto.generateKey();
-  const exportedKey = await crypto.exportKey(key);
+  const key = await generateKey();
+  const exportedKey = await exportKey(key);
   console.log("🔑 AES key (hex):", Buffer.from(exportedKey).toString("hex"));
 
   const chunkSize = 16; // bytes, small for demo
@@ -28,7 +31,7 @@ async function main() {
   // --- 3. encrypt each chunk ---
   const encryptedChunks: { iv: Uint8Array; data: Uint8Array }[] = [];
   for (const c of chunks) {
-    const e = await crypto.encrypt(key, c);
+    const e = await encrypt(key, c);
     encryptedChunks.push(e);
   }
   console.log("🔒 encrypted chunks:", encryptedChunks);
@@ -37,7 +40,7 @@ async function main() {
   const bucket = await createBucket("object-demo");
   console.log("🪣 bucket created:", bucket);
 
-  const client = await db();
+  const client = await getClient();
   const manifest = {
     name: "secret.txt",
     chunks: encryptedChunks.map((c, i) => ({
@@ -72,7 +75,7 @@ async function main() {
   for (const c of stored.chunks) {
     const iv = Uint8Array.from(Buffer.from(c.iv, "hex"));
     const data = Uint8Array.from(Buffer.from(c.dataHex, "hex"));
-    const d = await crypto.decrypt(key, { iv, data });
+    const d = await decrypt(key, { iv, data });
     decryptedChunks.push(d);
   }
 

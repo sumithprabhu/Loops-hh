@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createBucket, listBuckets } from "@sumithprabhu/edv-sdk";
+import { createBucket, listBuckets } from "shardbase";
 import { getSdkClient } from "@/lib/sdk";
 
 export async function GET() {

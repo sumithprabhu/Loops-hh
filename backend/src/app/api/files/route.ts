@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { uploadFile, listFiles, downloadFile, deleteFile } from "@sumithprabhu/edv-sdk";
+import { uploadFile, listFiles, downloadFile, deleteFile } from "shardbase";
 import { getSdkClient } from "@/lib/sdk";
 import { promises as fs } from "fs";
 import path from "path";

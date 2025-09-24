@@ -11,6 +11,7 @@
     "@rainbow-me/rainbowkit": "^2.2.8",
     "@sumithprabhu/edv-sdk": "^0.1.1",
     "@your-scope/edv-sdk": "file:../sdk",
+    "gsap": "^3.13.0",
     "next": "15.5.3",
     "react": "19.1.0",
     "react-dom": "19.1.0",
