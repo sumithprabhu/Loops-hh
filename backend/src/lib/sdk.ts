@@ -1,9 +1,11 @@
 // lib/sdk.ts
 import { initClient } from "shardbase";
+import { Signer } from "ethers";
+
 
 let initialized = false;
 
-export async function getSdkClient(opts?: { signer?: any; privateKey?: string }) {
+export async function getSdkClient(opts?: { signer?: Signer; privateKey?: string }) {
   if (!initialized) {
     if (opts?.signer) {
       // Frontend signer (RainbowKit/wallet)

@@ -40,8 +40,14 @@ export async function GET(req: Request) {
 
       },
     });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("❌ Download API error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+  
+    if (err instanceof Error) {
+      return NextResponse.json({ error: err.message }, { status: 500 });
+    }
+  
+    return NextResponse.json({ error: String(err) }, { status: 500 });
   }
+  
 }

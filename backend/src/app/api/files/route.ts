@@ -31,12 +31,20 @@ export async function GET(req: Request) {
     await getSdkClient();
     const files = await listFiles(bucketId);
     return NextResponse.json(files, { headers: corsHeaders });
-  } catch (err: any) {
+  }catch (err: unknown) {
+    if (err instanceof Error) {
+      return NextResponse.json(
+        { error: err.message },
+        { status: 500, headers: corsHeaders }
+      );
+    }
+  
     return NextResponse.json(
-      { error: err.message },
+      { error: String(err) },
       { status: 500, headers: corsHeaders }
     );
   }
+  
 }
 
 // --- POST upload file ---
@@ -65,13 +73,22 @@ export async function POST(req: Request) {
     const meta = await uploadFile(bucketId, tempPath);
 
     return NextResponse.json(meta, { headers: corsHeaders });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("❌ Upload API Error:", err);
+  
+    if (err instanceof Error) {
+      return NextResponse.json(
+        { error: err.message },
+        { status: 500, headers: corsHeaders }
+      );
+    }
+  
     return NextResponse.json(
-      { error: err.message },
+      { error: String(err) },
       { status: 500, headers: corsHeaders }
     );
   }
+  
 }
 
 // --- DELETE file ---
@@ -91,10 +108,18 @@ export async function DELETE(req: Request) {
     await getSdkClient();
     await deleteFile(bucketId, fileName);
     return NextResponse.json({ success: true }, { headers: corsHeaders });
-  } catch (err: any) {
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      return NextResponse.json(
+        { error: err.message },
+        { status: 500, headers: corsHeaders }
+      );
+    }
+  
     return NextResponse.json(
-      { error: err.message },
+      { error: String(err) },
       { status: 500, headers: corsHeaders }
     );
   }
+  
 }

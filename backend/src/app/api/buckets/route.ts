@@ -21,9 +21,15 @@ export async function GET() {
     });
     const buckets = await listBuckets();
     return NextResponse.json(buckets, { headers: corsHeaders });
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500, headers: corsHeaders });
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      return NextResponse.json({ error: err.message }, { status: 500, headers: corsHeaders });
+    }
+  
+    // fallback if it's not an Error object
+    return NextResponse.json({ error: String(err) }, { status: 500, headers: corsHeaders });
   }
+  
 }
 
 export async function POST(req: Request) {
@@ -42,7 +48,13 @@ export async function POST(req: Request) {
     });
     const bucket = await createBucket(name);
     return NextResponse.json(bucket, { headers: corsHeaders });
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500, headers: corsHeaders });
+  }catch (err: unknown) {
+    if (err instanceof Error) {
+      return NextResponse.json({ error: err.message }, { status: 500, headers: corsHeaders });
+    }
+  
+    // fallback if it's not an Error object
+    return NextResponse.json({ error: String(err) }, { status: 500, headers: corsHeaders });
   }
+  
 }
